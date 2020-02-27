@@ -2,6 +2,7 @@ package org.example.demo.setting;
 
 import org.example.bus.annotation.RemoteSetting;
 import org.example.bus.annotation.SettingGetter;
+import org.example.demo.bean.Point;
 
 @RemoteSetting
 public interface TestSetting {
@@ -13,8 +14,5 @@ public interface TestSetting {
     void testVoid();
 
     @SettingGetter(key = "test_other")
-    AAA a();
-
+    Point a();
 }
-
-class AAA  {}
