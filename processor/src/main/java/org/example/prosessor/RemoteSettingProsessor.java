@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 
-
 public class RemoteSettingProsessor extends AbstractProcessor {
 
     private Types typeUtils;

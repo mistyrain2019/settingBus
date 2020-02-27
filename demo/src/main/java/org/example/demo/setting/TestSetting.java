@@ -7,7 +7,7 @@ import org.example.bus.annotation.SettingGetter;
 public interface TestSetting {
 
     @SettingGetter(key = "test", defaultValue = "3", explanation = "测试")
-    void test();
+    int test();
 
 //    int getMaxLogTime();
 }

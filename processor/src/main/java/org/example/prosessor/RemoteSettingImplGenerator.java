@@ -11,9 +11,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -60,24 +59,69 @@ public class RemoteSettingImplGenerator {
 
         for (ExecutableElement executableElement : ees) {
 
-            SettingGetter settingAnnotation = executableElement.getAnnotation(SettingGetter.class);
+            SettingGetter settingGetter = executableElement.getAnnotation(SettingGetter.class);
 
-            if (settingAnnotation == null) {
+            if (settingGetter == null) {
                 throw new RuntimeException("抽象方法配置残缺 无法解析");
             }
 
-            System.out.println("returns:  " + executableElement.getReturnType().getClass());
-//                System.out.println("returns:  " + executableElement.getReturnType());
+//            System.out.println("returns:  " + executableElement.getReturnType().getClass());
+            System.out.println("returns:  " + executableElement.getReturnType());
 
-            MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
-                    .addModifiers(Modifier.PUBLIC)
-                    .addAnnotation(Override.class)
-//                        .returns(executableElement.getReturnType())
-                    .returns(TypeName.VOID)
-                    .build();
-            generatedMethods.add(methodSpec);
+            String returnType = executableElement.getReturnType().toString();
+            MethodSpec method = null;
+
+            switch (returnType) {
+                case "int":
+                    method = getIntMethod(executableElement, settingGetter);
+                    break;
+                case "void":
+                    method = getVoidMethod(executableElement);
+                    break;
+                default:
+                    method = getDefaultMethod(executableElement);
+
+            }
+
+            generatedMethods.add(method);
         }
         return generatedMethods;
+    }
+
+    private MethodSpec getVoidMethod(ExecutableElement executableElement) {
+        MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .returns(TypeName.VOID)
+                .build();
+        return methodSpec;
+    }
+
+    private MethodSpec getDefaultMethod(ExecutableElement executableElement) {
+        TypeMirror tm = executableElement.getReturnType();
+        MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+//                .returns())
+//                .addStatement("return null;")
+                .build();
+        return methodSpec;
+    }
+
+    private MethodSpec getIntMethod(ExecutableElement executableElement, SettingGetter settingGetter) {
+        String key = settingGetter.key();
+        int defaultIntVal = 0;
+        try {
+            defaultIntVal = Integer.parseInt(settingGetter.defaultValue());
+        } catch (Exception ignored) {
+        }
+        MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .addStatement("return $L", defaultIntVal)
+                .returns(int.class)
+                .build();
+        return methodSpec;
     }
 
 
