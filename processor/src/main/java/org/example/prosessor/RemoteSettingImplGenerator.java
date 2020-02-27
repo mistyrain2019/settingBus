@@ -6,21 +6,25 @@ import com.squareup.javapoet.TypeSpec;
 import org.example.bus.annotation.SettingGetter;
 import org.example.prosessor.util.FileUtil;
 
+import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static org.example.bus.Constants.DEBUG;
 import static org.example.bus.Constants.IMPL_SUFFIX;
 
 public class RemoteSettingImplGenerator {
 
-    void generateRemote(Set<? extends Element> annotatedElements) {
+    void generateRemote(Set<? extends Element> annotatedElements, Filer filer) {
 
         for (Element element : annotatedElements) {
             if (!(element instanceof TypeElement)) {
@@ -49,7 +53,18 @@ public class RemoteSettingImplGenerator {
             JavaFile javaFile = JavaFile.builder(info.packageName, hello)
                     .build();
 
-            FileUtil.write(javaFile, "./demo/target/generated/");
+//            FileUtil.write(javaFile, "./demo/target/generated/");
+
+            //将java写到当前项目中
+            try {
+                if (DEBUG) {
+                    javaFile.writeTo(System.out);    //打印到命令行中
+                }
+
+                javaFile.writeTo(filer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

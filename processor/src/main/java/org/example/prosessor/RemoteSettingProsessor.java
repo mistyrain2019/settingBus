@@ -53,7 +53,7 @@ public class RemoteSettingProsessor extends AbstractProcessor {
 
         Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(RemoteSetting.class);
         List<Element> toDealWith = new ArrayList<>();
-        remoteGenerator.generateRemote(annotatedElements);
+        remoteGenerator.generateRemote(annotatedElements, filer);
         return true;
     }
 }
