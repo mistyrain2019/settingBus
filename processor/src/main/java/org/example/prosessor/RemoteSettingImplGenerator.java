@@ -5,6 +5,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import org.example.bus.annotation.SettingGetter;
+import org.example.prosessor.util.FileUtil;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -41,7 +42,7 @@ public class RemoteSettingImplGenerator {
 
             // 构造一个实现类
             TypeSpec hello = TypeSpec.classBuilder(info.interfaceName + IMPL_SUFFIX)         //名称
-                    .addModifiers(Modifier.PUBLIC)                         //修饰
+                    .addModifiers(Modifier.PUBLIC)
                     .addSuperinterface(typeElement.asType())
                     .addMethods(generatedMethods)
                     .build();
@@ -50,25 +51,14 @@ public class RemoteSettingImplGenerator {
             JavaFile javaFile = JavaFile.builder(info.packageName, hello)
                     .build();
 
-            //将java写到当前项目中
-            try {
-                javaFile.writeTo(System.out);    //打印到命令行中
-                File file = new File("./demo/target/generated/");
-                if (file.exists()) {
-                    file.delete();
-                }
-                javaFile.writeTo(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            FileUtil.write(javaFile, "./demo/target/generated/");
         }
     }
 
     private List<MethodSpec> generatedMethods(List<? extends ExecutableElement> ees) {
         List<MethodSpec> generatedMethods = new ArrayList<>();
 
-        for (ExecutableElement executableElement: ees) {
+        for (ExecutableElement executableElement : ees) {
 
             SettingGetter settingAnnotation = executableElement.getAnnotation(SettingGetter.class);
 
@@ -89,4 +79,6 @@ public class RemoteSettingImplGenerator {
         }
         return generatedMethods;
     }
+
+
 }
