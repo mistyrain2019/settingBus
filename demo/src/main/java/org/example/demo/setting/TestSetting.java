@@ -6,7 +6,7 @@ import org.example.bus.annotation.SettingGetter;
 @RemoteSetting
 public interface TestSetting {
 
-    @SettingGetter
+    @SettingGetter(key = "test", defaultValue = "3", explanation = "测试")
     void test();
 
 //    int getMaxLogTime();
