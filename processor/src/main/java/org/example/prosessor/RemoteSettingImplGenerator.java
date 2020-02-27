@@ -1,9 +1,6 @@
 package org.example.prosessor;
 
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import org.example.bus.RemoteSettingRepository;
 import org.example.bus.annotation.SettingGetter;
 
@@ -12,6 +9,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -105,7 +103,7 @@ public class RemoteSettingImplGenerator {
                 case BOOLEAN:
                     break;
                 case DECLARED:
-                    method = getDeclaredMethod(executableElement);
+                    method = getDeclaredMethod(executableElement, settingGetter);
                     break;
                 default:
             }
@@ -124,13 +122,31 @@ public class RemoteSettingImplGenerator {
         return methodSpec;
     }
 
-    private MethodSpec getDeclaredMethod(ExecutableElement executableElement) {
+    private MethodSpec getDeclaredMethod(ExecutableElement executableElement, SettingGetter settingGetter) {
         TypeMirror tm = executableElement.getReturnType();
+        List<? extends TypeMirror> tp = null;
+        try {
+            settingGetter.converterClazz();
+        } catch (MirroredTypesException mte) {
+            tp = mte.getTypeMirrors();
+        }
+//        System.out.println("tp:!!!!   " + tp);
+        String key = settingGetter.key();
+        String defaultStr = settingGetter.defaultValue();
+        if (tp == null || tp.size() < 1) {
+            return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+                    .addModifiers(Modifier.PUBLIC)
+                    .addAnnotation(Override.class)
+                    .returns(TypeName.get(tm))
+                    .addStatement("return null")
+                    .build();
+        }
         MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
+                .addStatement("String val = centreRepository.getOrDefault($S, $S)", key, defaultStr)
+                .addStatement("return new $T().deserialization(val)", tp.get(0))
                 .returns(TypeName.get(tm))
-                .addStatement("return null")
                 .build();
         return methodSpec;
     }

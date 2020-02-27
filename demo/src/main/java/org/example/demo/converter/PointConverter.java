@@ -1,10 +1,10 @@
 package org.example.demo.converter;
 
-import org.example.bus.annotation.Convertible;
+import org.example.bus.Converter;
 import org.example.demo.bean.Point;
 import org.json.JSONObject;
 
-public class PointConverter implements Convertible<Point> {
+public class PointConverter implements Converter<Point> {
     @Override
     public Point deserialization(String s) {
         try {

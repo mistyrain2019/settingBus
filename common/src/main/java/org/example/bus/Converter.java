@@ -1,6 +1,6 @@
-package org.example.bus.annotation;
+package org.example.bus;
 
-public interface Convertible<T> {
+public interface Converter<T> {
 
     T deserialization(String s);
 
