@@ -29,7 +29,7 @@ public class RemoteSettingProsessor extends AbstractProcessor {
         elementUtils = processingEnv.getElementUtils();
         filer = processingEnv.getFiler();
         messager = processingEnv.getMessager();
-        remoteGenerator = new RemoteSettingImplGenerator();
+        remoteGenerator = new RemoteSettingImplGenerator(filer, elementUtils, typeUtils);
     }
 
     @Override
@@ -50,10 +50,8 @@ public class RemoteSettingProsessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-
         Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(RemoteSetting.class);
-        List<Element> toDealWith = new ArrayList<>();
-        remoteGenerator.generateRemote(annotatedElements, filer);
+        remoteGenerator.generateRemote(annotatedElements);
         return true;
     }
 }

@@ -2,6 +2,7 @@ package org.example.prosessor;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import org.example.bus.RemoteSettingRepository;
 import org.example.bus.annotation.SettingGetter;
@@ -13,18 +14,28 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.ElementFilter;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.example.bus.Constants.DEBUG;
 import static org.example.bus.Constants.IMPL_SUFFIX;
 
 public class RemoteSettingImplGenerator {
 
-    void generateRemote(Set<? extends Element> annotatedElements, Filer filer) {
+    private Filer filer;
+    private Elements elementUtil;
+    private Types typeUtil;
+
+    public RemoteSettingImplGenerator(Filer filer, Elements elementUtil, Types typeUtil) {
+        this.filer = filer;
+        this.elementUtil = elementUtil;
+        this.typeUtil = typeUtil;
+    }
+
+    void generateRemote(Iterable<? extends Element> annotatedElements) {
 
         for (Element element : annotatedElements) {
             if (!(element instanceof TypeElement)) {
@@ -32,15 +43,9 @@ public class RemoteSettingImplGenerator {
             }
 
             TypeElement typeElement = (TypeElement) element;
-            InterfaceInfo info = new InterfaceInfo(typeElement);
+            InterfaceInfo info = new InterfaceInfo(typeElement, elementUtil);
 
-
-            //获取源代码对象的成员
-            List<? extends Element> enclosedElements = typeElement.getEnclosedElements();
-            //留下方法成员,过滤掉其他成员
-            List<? extends ExecutableElement> executableElements = ElementFilter.methodsIn(enclosedElements);
-
-            List<MethodSpec> generatedMethods = generatedMethods(executableElements);
+            List<MethodSpec> generatedMethods = generatedMethods(info.executableElements);
 
             MethodSpec constructor = MethodSpec.constructorBuilder()
                     .addModifiers(Modifier.PUBLIC)
@@ -83,9 +88,6 @@ public class RemoteSettingImplGenerator {
                 throw new RuntimeException("抽象方法配置残缺 无法解析");
             }
 
-//            System.out.println("returns:  " + executableElement.getReturnType().getClass());
-            System.out.println("returns:  " + executableElement.getReturnType().getKind());
-
             TypeKind returnTypeKind = executableElement.getReturnType().getKind();
             MethodSpec method = null;
 
@@ -101,9 +103,11 @@ public class RemoteSettingImplGenerator {
                 case DOUBLE:
                     break;
                 case BOOLEAN:
+                    break;
+                case DECLARED:
+                    method = getDeclaredMethod(executableElement);
+                    break;
                 default:
-                    method = getDefaultMethod(executableElement);
-
             }
 
             generatedMethods.add(method);
@@ -120,13 +124,14 @@ public class RemoteSettingImplGenerator {
         return methodSpec;
     }
 
-    private MethodSpec getDefaultMethod(ExecutableElement executableElement) {
+    private MethodSpec getDeclaredMethod(ExecutableElement executableElement) {
         TypeMirror tm = executableElement.getReturnType();
+        Element returnElement = typeUtil.asElement(executableElement.getReturnType());
         MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
-//                .returns())
-//                .addStatement("return null;")
+                .returns(TypeName.get(tm))
+                .addStatement("return null")
                 .build();
         return methodSpec;
     }
