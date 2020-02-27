@@ -1,7 +1,6 @@
 package org.example.prosessor;
 
 import org.example.bus.annotation.RemoteSetting;
-import org.example.bus.annotation.SettingGetter;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -44,7 +43,6 @@ public class SettingProsessor extends AbstractProcessor {
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> strSet = new HashSet<>();
         strSet.add(RemoteSetting.class.getCanonicalName());
-        strSet.add(SettingGetter.class.getCanonicalName());
         return strSet;
     }
 
