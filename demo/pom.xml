@@ -56,21 +56,24 @@
                         <id>default-compile</id>
                         <phase>generate-sources</phase>
                         <configuration>
-<!--                            <generatedSourcesDirectory>-->
-<!--                                ${project.build.directory}/generated/-->
-<!--                            </generatedSourcesDirectory>-->
-                            <proc>only</proc>
+                            <!--                            <generatedSourcesDirectory>-->
+                            <!--                                ${project.build.directory}/generated/-->
+                            <!--                            </generatedSourcesDirectory>-->
+<!--                            <proc>only</proc>-->
                         </configuration>
                     </execution>
 
-                    <execution>
-                        <id>build-generated-code</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
+<!--                    <execution>-->
+<!--                        <id>build-generated-code</id>-->
+<!--                        <phase>compile</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>compile</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <proc>none</proc>-->
+<!--                        </configuration>-->
 
-                    </execution>
+<!--                    </execution>-->
                 </executions>
             </plugin>
         </plugins>

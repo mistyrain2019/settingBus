@@ -126,7 +126,6 @@ public class RemoteSettingImplGenerator {
 
     private MethodSpec getDeclaredMethod(ExecutableElement executableElement) {
         TypeMirror tm = executableElement.getReturnType();
-        Element returnElement = typeUtil.asElement(executableElement.getReturnType());
         MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
