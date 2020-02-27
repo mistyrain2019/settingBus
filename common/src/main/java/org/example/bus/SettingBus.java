@@ -4,7 +4,10 @@ public class SettingBus {
 
     public static <T> T obtainSetting(Class<T> clazz) {
         try {
-            return clazz.newInstance();
+            String interfaceName = clazz.getCanonicalName();
+            System.out.println(interfaceName);
+            Class<?> impl = Class.forName(interfaceName + "__Impl");
+            return (T) impl.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }

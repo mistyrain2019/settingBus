@@ -117,7 +117,7 @@ public class RemoteSettingProsessor extends AbstractProcessor {
 
 
             // 构造一个类
-            TypeSpec hello = TypeSpec.classBuilder(interfaceName + "$$Impl")         //名称
+            TypeSpec hello = TypeSpec.classBuilder(interfaceName + "__Impl")         //名称
                     .addModifiers(Modifier.PUBLIC)                         //修饰
                     .addSuperinterface(typeElement.asType())
                     .addMethods(generatedMethods)

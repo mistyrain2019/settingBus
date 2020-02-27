@@ -56,7 +56,9 @@
                         <id>default-compile</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <generatedSourcesDirectory>${project.build.directory}/generated/</generatedSourcesDirectory>
+                            <generatedSourcesDirectory>
+                                ${project.build.directory}/generated/
+                            </generatedSourcesDirectory>
                             <proc>only</proc>
                         </configuration>
                     </execution>
