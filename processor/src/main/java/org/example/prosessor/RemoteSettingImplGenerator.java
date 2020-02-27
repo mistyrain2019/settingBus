@@ -21,24 +21,6 @@ import static org.example.bus.Constants.IMPL_SUFFIX;
 
 public class RemoteSettingImplGenerator {
 
-    static class InterfaceInfo {
-
-        String interfaceName;
-
-        String fullName;
-
-        int packageLastIndex;
-
-        String packageName;
-
-        InterfaceInfo(TypeElement typeElement) {
-            interfaceName = typeElement.getSimpleName().toString();
-            fullName = typeElement.getQualifiedName().toString();
-            int packageLastIndex = fullName.lastIndexOf(interfaceName) - 1;
-            packageName = fullName.substring(0, packageLastIndex);
-        }
-    }
-
     void generateRemote(Set<? extends Element> annotatedElements) {
 
         for (Element element : annotatedElements) {
