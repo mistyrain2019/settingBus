@@ -3,17 +3,17 @@ package org.example.prosessor;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
+import org.example.bus.RemoteSettingRepository;
 import org.example.bus.annotation.SettingGetter;
-import org.example.prosessor.util.FileUtil;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,25 +42,29 @@ public class RemoteSettingImplGenerator {
 
             List<MethodSpec> generatedMethods = generatedMethods(executableElements);
 
+            MethodSpec constructor = MethodSpec.constructorBuilder()
+                    .addModifiers(Modifier.PUBLIC)
+                    .addStatement("this.centreRepository = $T.getInstance()", RemoteSettingRepository.class)
+                    .build();
+
             // 构造一个实现类
-            TypeSpec hello = TypeSpec.classBuilder(info.interfaceName + IMPL_SUFFIX)         //名称
+            TypeSpec impl = TypeSpec.classBuilder(info.interfaceName + IMPL_SUFFIX)
                     .addModifiers(Modifier.PUBLIC)
                     .addSuperinterface(typeElement.asType())
+                    .addField(RemoteSettingRepository.class, "centreRepository", Modifier.PRIVATE, Modifier.FINAL)
+                    .addMethod(constructor)
                     .addMethods(generatedMethods)
                     .build();
 
             //生成一个Java文件
-            JavaFile javaFile = JavaFile.builder(info.packageName, hello)
+            JavaFile javaFile = JavaFile.builder(info.packageName, impl)
                     .build();
-
-//            FileUtil.write(javaFile, "./demo/target/generated/");
 
             //将java写到当前项目中
             try {
                 if (DEBUG) {
                     javaFile.writeTo(System.out);    //打印到命令行中
                 }
-
                 javaFile.writeTo(filer);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -80,18 +84,23 @@ public class RemoteSettingImplGenerator {
             }
 
 //            System.out.println("returns:  " + executableElement.getReturnType().getClass());
-            System.out.println("returns:  " + executableElement.getReturnType());
+            System.out.println("returns:  " + executableElement.getReturnType().getKind());
 
-            String returnType = executableElement.getReturnType().toString();
+            TypeKind returnTypeKind = executableElement.getReturnType().getKind();
             MethodSpec method = null;
 
-            switch (returnType) {
-                case "int":
+            switch (returnTypeKind) {
+                case INT:
                     method = getIntMethod(executableElement, settingGetter);
                     break;
-                case "void":
+                case VOID:
                     method = getVoidMethod(executableElement);
                     break;
+                case LONG:
+                    break;
+                case DOUBLE:
+                    break;
+                case BOOLEAN:
                 default:
                     method = getDefaultMethod(executableElement);
 
@@ -124,15 +133,18 @@ public class RemoteSettingImplGenerator {
 
     private MethodSpec getIntMethod(ExecutableElement executableElement, SettingGetter settingGetter) {
         String key = settingGetter.key();
-        int defaultIntVal = 0;
-        try {
-            defaultIntVal = Integer.parseInt(settingGetter.defaultValue());
-        } catch (Exception ignored) {
-        }
+        String defaultIntVal = settingGetter.defaultValue();
         MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
-                .addStatement("return $L", defaultIntVal)
+                .addStatement("String val = centreRepository.getOrDefault($S, $S)", key, defaultIntVal)
+                .addStatement("int intVal = 0")
+                .beginControlFlow("try")
+                .addStatement("intVal = $T.parseInt(val)", Integer.class)
+                .endControlFlow()
+                .beginControlFlow("catch (Exception e)")
+                .endControlFlow()
+                .addStatement("return intVal")
                 .returns(int.class)
                 .build();
         return methodSpec;
