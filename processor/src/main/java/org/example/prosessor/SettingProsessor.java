@@ -8,13 +8,11 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
-public class RemoteSettingProsessor extends AbstractProcessor {
+public class SettingProsessor extends AbstractProcessor {
 
     private Types typeUtils;
     private Elements elementUtils;

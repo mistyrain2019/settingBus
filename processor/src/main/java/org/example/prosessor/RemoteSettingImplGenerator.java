@@ -145,9 +145,7 @@ public class RemoteSettingImplGenerator {
                 .addStatement("int intVal = 0")
                 .beginControlFlow("try")
                 .addStatement("intVal = $T.parseInt(val)", Integer.class)
-                .endControlFlow()
-                .beginControlFlow("catch (Exception e)")
-                .endControlFlow()
+                .endControlFlow("catch (Exception ignored) {}")
                 .addStatement("return intVal")
                 .returns(int.class)
                 .build();

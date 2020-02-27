@@ -47,7 +47,7 @@
                     <encoding>UTF-8</encoding>
                     <annotationProcessors>
                         <annotationProcessor>
-                            org.example.prosessor.RemoteSettingProsessor
+                            org.example.prosessor.SettingProsessor
                         </annotationProcessor>
                     </annotationProcessors>
                 </configuration>
