@@ -16,7 +16,9 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.example.bus.Constants.DEBUG;
 import static org.example.bus.Constants.IMPL_SUFFIX;
@@ -43,7 +45,7 @@ public class RemoteSettingImplGenerator {
             TypeElement typeElement = (TypeElement) element;
             InterfaceInfo info = new InterfaceInfo(typeElement, elementUtil);
 
-            List<FieldSpec> fields = generatedConverterFields(info.executableElements);
+            Iterable<FieldSpec> converterFields = generatedConverterFields(info.executableElements);
 
             List<MethodSpec> generatedMethods = generatedMethods(info.executableElements);
 
@@ -56,7 +58,7 @@ public class RemoteSettingImplGenerator {
             TypeSpec impl = TypeSpec.classBuilder(info.interfaceName + IMPL_SUFFIX)
                     .addModifiers(Modifier.PUBLIC)
                     .addSuperinterface(typeElement.asType())
-                    .addFields(fields)
+                    .addFields(converterFields)
                     .addField(RemoteSettingRepository.class, "centreRepository", Modifier.PRIVATE, Modifier.FINAL)
                     .addMethod(constructor)
                     .addMethods(generatedMethods)
@@ -78,8 +80,8 @@ public class RemoteSettingImplGenerator {
         }
     }
 
-    private List<FieldSpec> generatedConverterFields(List<? extends ExecutableElement> methods) {
-        List<FieldSpec> res = new ArrayList<>();
+    private Iterable<FieldSpec> generatedConverterFields(List<? extends ExecutableElement> methods) {
+        Map<String, FieldSpec> res = new HashMap<>();
         for (ExecutableElement executableElement : methods) {
 
             SettingGetter settingGetter = executableElement.getAnnotation(SettingGetter.class);
@@ -101,15 +103,18 @@ public class RemoteSettingImplGenerator {
                 }
                 TypeMirror tm = tp.get(0);
                 String name = tm.toString().toLowerCase().replaceAll("\\.", "_");
+                if (res.containsKey(name)) {
+                    continue;
+                }
 //                System.out.println("name:   " + name);
                 FieldSpec fieldSpec = FieldSpec.builder(TypeName.get(tm), name)
                         .addModifiers(Modifier.PRIVATE)
                         .initializer("new $T()", tm)
                         .build();
-                res.add(fieldSpec);
+                res.put(name, fieldSpec);
             }
         }
-        return res;
+        return res.values();
     }
 
     private List<MethodSpec> generatedMethods(List<? extends ExecutableElement> ees) {

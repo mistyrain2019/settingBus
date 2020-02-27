@@ -15,5 +15,5 @@ public interface TestSetting {
     void testVoid();
 
     @SettingGetter(key = "test_other", converterClazz = {PointConverter.class})
-    Point a();
+    Point testOther();
 }
