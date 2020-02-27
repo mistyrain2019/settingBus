@@ -43,6 +43,8 @@ public class RemoteSettingImplGenerator {
             TypeElement typeElement = (TypeElement) element;
             InterfaceInfo info = new InterfaceInfo(typeElement, elementUtil);
 
+            List<FieldSpec> fields = generatedConverterFields(info.executableElements);
+
             List<MethodSpec> generatedMethods = generatedMethods(info.executableElements);
 
             MethodSpec constructor = MethodSpec.constructorBuilder()
@@ -54,6 +56,7 @@ public class RemoteSettingImplGenerator {
             TypeSpec impl = TypeSpec.classBuilder(info.interfaceName + IMPL_SUFFIX)
                     .addModifiers(Modifier.PUBLIC)
                     .addSuperinterface(typeElement.asType())
+                    .addFields(fields)
                     .addField(RemoteSettingRepository.class, "centreRepository", Modifier.PRIVATE, Modifier.FINAL)
                     .addMethod(constructor)
                     .addMethods(generatedMethods)
@@ -73,6 +76,40 @@ public class RemoteSettingImplGenerator {
                 e.printStackTrace();
             }
         }
+    }
+
+    private List<FieldSpec> generatedConverterFields(List<? extends ExecutableElement> methods) {
+        List<FieldSpec> res = new ArrayList<>();
+        for (ExecutableElement executableElement : methods) {
+
+            SettingGetter settingGetter = executableElement.getAnnotation(SettingGetter.class);
+
+            if (settingGetter == null) {
+                continue;
+            }
+            TypeKind returnTypeKind = executableElement.getReturnType().getKind();
+
+            if (returnTypeKind.equals(TypeKind.DECLARED)) {
+                List<? extends TypeMirror> tp = null;
+                try {
+                    settingGetter.converterClazz();
+                } catch (MirroredTypesException mte) {
+                    tp = mte.getTypeMirrors();
+                }
+                if (tp == null || tp.isEmpty()) {
+                    continue;
+                }
+                TypeMirror tm = tp.get(0);
+                String name = tm.toString().toLowerCase().replaceAll("\\.", "_");
+//                System.out.println("name:   " + name);
+                FieldSpec fieldSpec = FieldSpec.builder(TypeName.get(tm), name)
+                        .addModifiers(Modifier.PRIVATE)
+                        .initializer("new $T()", tm)
+                        .build();
+                res.add(fieldSpec);
+            }
+        }
+        return res;
     }
 
     private List<MethodSpec> generatedMethods(List<? extends ExecutableElement> ees) {
@@ -130,7 +167,6 @@ public class RemoteSettingImplGenerator {
         } catch (MirroredTypesException mte) {
             tp = mte.getTypeMirrors();
         }
-//        System.out.println("tp:!!!!   " + tp);
         String key = settingGetter.key();
         String defaultStr = settingGetter.defaultValue();
         if (tp == null || tp.size() < 1) {
@@ -141,11 +177,12 @@ public class RemoteSettingImplGenerator {
                     .addStatement("return null")
                     .build();
         }
+        String fieldName = tp.get(0).toString().toLowerCase().replaceAll("\\.", "_");
         MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
                 .addStatement("String val = centreRepository.getOrDefault($S, $S)", key, defaultStr)
-                .addStatement("return new $T().deserialization(val)", tp.get(0))
+                .addStatement("return $L.deserialization(val)", fieldName)
                 .returns(TypeName.get(tm))
                 .build();
         return methodSpec;
