@@ -2,7 +2,6 @@ package org.example.prosessor;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import org.example.bus.annotation.SettingGetter;
 import org.example.prosessor.util.FileUtil;
@@ -92,7 +91,7 @@ public class RemoteSettingImplGenerator {
         MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
-                .returns(TypeName.VOID)
+                .returns(void.class)
                 .build();
         return methodSpec;
     }

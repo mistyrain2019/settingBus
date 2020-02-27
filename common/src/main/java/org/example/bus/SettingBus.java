@@ -8,14 +8,14 @@ import static org.example.bus.Constants.IMPL_SUFFIX;
 
 public class SettingBus {
 
-    private static final Map<String, Object> SETTING_CLASS_CACHE = new HashMap<String, Object>();
+    private static final Map<String, Object> SETTING_IMPL_CLASS_CACHE = new HashMap<String, Object>();
 
     public static <T> T obtainSetting(Class<T> clazz) {
         String clazzName = clazz.toString();
-        if (!SETTING_CLASS_CACHE.containsKey(clazzName)) {
-            SETTING_CLASS_CACHE.put(clazzName, findSettingsImpl(clazz));
+        if (!SETTING_IMPL_CLASS_CACHE.containsKey(clazzName)) {
+            SETTING_IMPL_CLASS_CACHE.put(clazzName, findSettingsImpl(clazz));
         }
-        return (T) SETTING_CLASS_CACHE.get(clazz.toString());
+        return (T) SETTING_IMPL_CLASS_CACHE.get(clazz.toString());
     }
 
     private static <T> T findSettingsImpl(Class<T> clazz) {
