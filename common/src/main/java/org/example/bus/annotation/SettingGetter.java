@@ -1,6 +1,6 @@
 package org.example.bus.annotation;
 
-import org.example.bus.Converter;
+import org.example.bus.api.Converter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

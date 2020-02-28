@@ -1,4 +1,4 @@
-package org.example.bus;
+package org.example.bus.api;
 
 public interface Converter<T> {
 

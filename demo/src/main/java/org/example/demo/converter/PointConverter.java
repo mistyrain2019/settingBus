@@ -1,6 +1,6 @@
 package org.example.demo.converter;
 
-import org.example.bus.Converter;
+import org.example.bus.api.Converter;
 import org.example.demo.bean.Point;
 import org.json.JSONObject;
 
