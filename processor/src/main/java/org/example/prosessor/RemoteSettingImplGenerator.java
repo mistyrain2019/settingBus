@@ -20,8 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.example.bus.common.Constants.DEBUG;
-import static org.example.bus.common.Constants.IMPL_SUFFIX;
+import static org.example.bus.common.Constants.*;
 
 public class RemoteSettingImplGenerator {
 
@@ -168,8 +167,7 @@ public class RemoteSettingImplGenerator {
 
     private MethodSpec getDeclaredMethod(ExecutableElement executableElement, SettingGetter settingGetter) {
         TypeMirror tm = executableElement.getReturnType();
-        if (tm.toString().endsWith("String")) {
-            System.out.println(tm.toString());
+        if (STRING_QUALIFIED_NAME.equals(tm.toString())) {
             return getStringMethod(executableElement, settingGetter);
         }
         List<? extends TypeMirror> tp = null;
