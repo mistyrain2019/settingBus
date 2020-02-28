@@ -49,7 +49,7 @@ public class SettingProsessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(RemoteSetting.class);
-        remoteGenerator.generateRemote(annotatedElements);
+        remoteGenerator.generateRemoteSettingImpl(annotatedElements);
         return true;
     }
 }
