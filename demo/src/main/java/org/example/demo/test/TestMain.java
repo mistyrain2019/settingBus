@@ -9,14 +9,22 @@ public class TestMain {
     public static void main(String[] args) {
         RemoteSettingRepository.getInstance().setUpdater(new TestUpdater());
 
+        System.out.println(SettingBus.obtainSetting(TestSetting.class).testInt());
+        System.out.println(SettingBus.obtainSetting(TestSetting.class).testOther());
+        System.out.println(SettingBus.obtainSetting(TestSetting.class).testLong());
+        System.out.println(SettingBus.obtainSetting(TestSetting.class).testDouble());
+        System.out.println(SettingBus.obtainSetting(TestSetting.class).testBoolean());
+        try {
+            Thread.sleep(4000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testInt());
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testOther());
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testLong());
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testDouble());
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testBoolean());
-        while (true) {
-
-        }
+        System.exit(0);
     }
 }

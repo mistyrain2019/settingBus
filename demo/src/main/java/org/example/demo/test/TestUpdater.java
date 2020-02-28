@@ -1,9 +1,7 @@
 package org.example.demo.test;
 
-import org.example.bus.SettingBus;
 import org.example.bus.api.RemoteSettingUpdater;
 import org.example.bus.api.UpdateCallback;
-import org.example.demo.setting.TestSetting;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -12,20 +10,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class TestUpdater implements RemoteSettingUpdater {
 
     public static final String GET_URL = "http://localhost:2012/settings";
+    Executor executor = Executors.newSingleThreadExecutor();
 
     @Override
     public void update(UpdateCallback updateCallback) {
-        new Thread() {
-            @Override
-            public void run() {
-                doUpdate(updateCallback);
-
-            }
-        }.start();
+        executor.execute(() -> doUpdate(updateCallback));
     }
 
     private void doUpdate(UpdateCallback updateCallback) {
@@ -40,10 +35,12 @@ public class TestUpdater implements RemoteSettingUpdater {
                 }
             }
             updateCallback.onSuccess(settingMap);
-            System.out.println("更新后: " + SettingBus.obtainSetting(TestSetting.class).testInt());
+//            System.out.println("更新后int: " + SettingBus.obtainSetting(TestSetting.class).testInt());
+//            System.out.println("更新后double: " + SettingBus.obtainSetting(TestSetting.class).testDouble());
 
         } catch (Exception e) {
         }
+//        System.out.println("更新失败");
         updateCallback.onFailure();
     }
 
@@ -57,9 +54,9 @@ public class TestUpdater implements RemoteSettingUpdater {
             connection.connect();
             // 取得输入流，并使用Reader读取
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));// 设置编码,否则中文乱码
-            System.out.println("=============================");
-            System.out.println("Contents of get request");
-            System.out.println("=============================");
+//            System.out.println("=============================");
+//            System.out.println("Contents of get request");
+//            System.out.println("=============================");
             String lines;
             String res = "";
             while ((lines = reader.readLine()) != null) {
@@ -69,9 +66,9 @@ public class TestUpdater implements RemoteSettingUpdater {
             reader.close();
             // 断开连接
             connection.disconnect();
-            System.out.println("=============================");
-            System.out.println("Contents of get request ends");
-            System.out.println("=============================");
+//            System.out.println("=============================");
+//            System.out.println("Contents of get request ends");
+//            System.out.println("=============================");
             return res;
         } catch (Exception e) {
             e.printStackTrace();
