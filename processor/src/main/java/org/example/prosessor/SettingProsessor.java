@@ -1,5 +1,6 @@
 package org.example.prosessor;
 
+import org.example.bus.annotation.LocalSetting;
 import org.example.bus.annotation.RemoteSetting;
 
 import javax.annotation.processing.*;
@@ -19,6 +20,7 @@ public class SettingProsessor extends AbstractProcessor {
     private Filer filer;
     private Messager messager;
     private RemoteSettingImplGenerator remoteGenerator;
+    private LocalSettingImplGenerator localGenerator;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -28,6 +30,7 @@ public class SettingProsessor extends AbstractProcessor {
         filer = processingEnv.getFiler();
         messager = processingEnv.getMessager();
         remoteGenerator = new RemoteSettingImplGenerator(filer, elementUtils, typeUtils);
+        localGenerator = new LocalSettingImplGenerator(filer, elementUtils, typeUtils);
     }
 
     @Override
@@ -41,15 +44,19 @@ public class SettingProsessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        Set<String> strSet = new HashSet<>();
-        strSet.add(RemoteSetting.class.getCanonicalName());
-        return strSet;
+        Set<String> supportedSet = new HashSet<>();
+        supportedSet.add(RemoteSetting.class.getCanonicalName());
+        supportedSet.add(LocalSetting.class.getCanonicalName());
+        return supportedSet;
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(RemoteSetting.class);
-        remoteGenerator.generateRemoteSettingImpl(annotatedElements);
+        Set<? extends Element> annotatedRemoteElements = roundEnv.getElementsAnnotatedWith(RemoteSetting.class);
+        remoteGenerator.generateRemoteSettingImpl(annotatedRemoteElements);
+
+        Set<? extends Element> annotatedLocalElements = roundEnv.getElementsAnnotatedWith(LocalSetting.class);
+        localGenerator.generateLocalSettingImpl(annotatedLocalElements);
         return true;
     }
 }

@@ -16,17 +16,12 @@ import static org.example.bus.common.Constants.STRING_QUALIFIED_NAME;
 
 public class GetterMethodGenerator {
 
-
     public static Iterable<MethodSpec> generateGetterMethods(List<? extends ExecutableElement> ees) {
         List<MethodSpec> generatedMethods = new ArrayList<>();
 
         for (ExecutableElement executableElement : ees) {
 
             SettingGetter settingGetter = executableElement.getAnnotation(SettingGetter.class);
-
-            if (settingGetter == null) {
-                throw new RuntimeException("抽象方法配置残缺 无法解析");
-            }
 
             TypeKind returnTypeKind = executableElement.getReturnType().getKind();
             MethodSpec method = null;

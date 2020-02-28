@@ -19,7 +19,8 @@ public class FileWriter {
         //将java写到当前项目中
         try {
             if (DEBUG) {
-                javaFile.writeTo(System.out);    //打印到命令行中
+                // debug模式打印到命令行中
+                javaFile.writeTo(System.out);
             }
             javaFile.writeTo(filer);
         } catch (IOException e) {

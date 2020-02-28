@@ -4,7 +4,8 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import org.example.bus.annotation.SettingGetter;
-import org.example.bus.repository.RemoteSettingRepository;
+import org.example.bus.annotation.SettingSetter;
+import org.example.bus.repository.LocalSettingRepository;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
@@ -13,35 +14,39 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.example.bus.common.Constants.IMPL_SUFFIX;
 
-public class RemoteSettingImplGenerator {
+public class LocalSettingImplGenerator {
 
     private Filer filer;
     private Elements elementUtil;
     private Types typeUtil;
 
-    public RemoteSettingImplGenerator(Filer filer, Elements elementUtil, Types typeUtil) {
+    public LocalSettingImplGenerator(Filer filer, Elements elementUtil, Types typeUtil) {
         this.filer = filer;
         this.elementUtil = elementUtil;
         this.typeUtil = typeUtil;
     }
 
-    public void generateRemoteSettingImpl(Iterable<? extends Element> annotatedElements) {
+    public void generateLocalSettingImpl(Iterable<? extends Element> annotatedElements) {
 
         for (Element element : annotatedElements) {
             if (!(element instanceof TypeElement)) {
                 continue;
             }
-
             TypeElement typeElement = (TypeElement) element;
 
             // 得到接口信息
             InterfaceInfo info = new InterfaceInfo(typeElement, elementUtil);
+
+            // 得到要处理的 setter 方法
+            List<? extends ExecutableElement> setterMethods = info.executableElements
+                    .stream()
+                    .filter(executableElement -> executableElement.getAnnotation(SettingSetter.class) != null)
+                    .collect(Collectors.toList());
 
             // 得到要处理的 getter 方法
             List<? extends ExecutableElement> getterMethods = info.executableElements
@@ -49,7 +54,7 @@ public class RemoteSettingImplGenerator {
                     .filter(executableElement -> executableElement.getAnnotation(SettingGetter.class) != null)
                     .collect(Collectors.toList());
 
-            if (getterMethods.size() < info.executableElements.size()) {
+            if (setterMethods.size() + getterMethods.size() < info.executableElements.size()) {
                 throw new RuntimeException("抽象方法配置残缺 无法解析");
             }
 
@@ -67,7 +72,7 @@ public class RemoteSettingImplGenerator {
                     .addModifiers(Modifier.PUBLIC)
                     .addSuperinterface(typeElement.asType())
                     .addFields(converterFields)
-                    .addField(RemoteSettingRepository.class, "centreRepository", Modifier.PRIVATE, Modifier.FINAL)
+                    .addField(LocalSettingRepository.class, "centreRepository", Modifier.PRIVATE, Modifier.FINAL)
                     .addMethod(constructor)
                     .addMethods(generatedGetterMethods)
                     .build();
@@ -80,7 +85,7 @@ public class RemoteSettingImplGenerator {
     private MethodSpec generateConstructor() {
         return MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
-                .addStatement("this.centreRepository = $T.getInstance()", RemoteSettingRepository.class)
+                .addStatement("this.centreRepository = $T.getInstance()", LocalSettingRepository.class)
                 .build();
     }
 }
