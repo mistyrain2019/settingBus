@@ -16,9 +16,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.example.bus.common.Constants.*;
 
@@ -44,7 +42,7 @@ public class RemoteSettingImplGenerator {
             TypeElement typeElement = (TypeElement) element;
             InterfaceInfo info = new InterfaceInfo(typeElement, elementUtil);
 
-            Iterable<FieldSpec> converterFields = generatedConverterFields(info.executableElements);
+            Iterable<FieldSpec> converterFields = ConverterFieldsGenerator.generateConverterFields(info.executableElements);
 
             List<MethodSpec> generatedMethods = generatedMethods(info.executableElements);
 
@@ -65,6 +63,7 @@ public class RemoteSettingImplGenerator {
 
             //生成一个Java文件
             JavaFile javaFile = JavaFile.builder(info.packageName, impl)
+                    .addFileComment("Generated code should not be modified! ")
                     .build();
 
             //将java写到当前项目中
@@ -77,43 +76,6 @@ public class RemoteSettingImplGenerator {
                 e.printStackTrace();
             }
         }
-    }
-
-    private Iterable<FieldSpec> generatedConverterFields(List<? extends ExecutableElement> methods) {
-        Map<String, FieldSpec> res = new HashMap<>();
-        for (ExecutableElement executableElement : methods) {
-
-            SettingGetter settingGetter = executableElement.getAnnotation(SettingGetter.class);
-
-            if (settingGetter == null) {
-                continue;
-            }
-            TypeKind returnTypeKind = executableElement.getReturnType().getKind();
-
-            if (returnTypeKind.equals(TypeKind.DECLARED)) {
-                List<? extends TypeMirror> tp = null;
-                try {
-                    settingGetter.converterClazz();
-                } catch (MirroredTypesException mte) {
-                    tp = mte.getTypeMirrors();
-                }
-                if (tp == null || tp.isEmpty()) {
-                    continue;
-                }
-                TypeMirror tm = tp.get(0);
-                String name = tm.toString().toLowerCase().replaceAll("\\.", "_");
-                if (res.containsKey(name)) {
-                    continue;
-                }
-//                System.out.println("name:   " + name);
-                FieldSpec fieldSpec = FieldSpec.builder(TypeName.get(tm), name)
-                        .addModifiers(Modifier.PRIVATE)
-                        .initializer("new $T()", tm)
-                        .build();
-                res.put(name, fieldSpec);
-            }
-        }
-        return res.values();
     }
 
     private List<MethodSpec> generatedMethods(List<? extends ExecutableElement> ees) {
@@ -186,7 +148,7 @@ public class RemoteSettingImplGenerator {
                     .addStatement("return null")
                     .build();
         }
-        String fieldName = tp.get(0).toString().toLowerCase().replaceAll("\\.", "_");
+        String fieldName = ConverterFieldsGenerator.getGeneratedFieldName(tp.get(0));
         return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)

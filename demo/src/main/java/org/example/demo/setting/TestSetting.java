@@ -17,6 +17,9 @@ public interface TestSetting {
     @SettingGetter(key = "test_other", converterClazz = {PointConverter.class})
     Point testOther();
 
+    @SettingGetter(key = "test_other1", converterClazz = {PointConverter.class})
+    Point testOther1();
+
     @SettingGetter(key="test_long", defaultValue = "500000000000000000")
     long testLong();
 
