@@ -9,5 +9,7 @@ public class TestMain {
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testInt());
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testOther());
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testLong());
+        System.out.println(SettingBus.obtainSetting(TestSetting.class).testDouble());
+        System.out.println(SettingBus.obtainSetting(TestSetting.class).testBoolean());
     }
 }

@@ -135,18 +135,20 @@ public class RemoteSettingImplGenerator {
                 case INT:
                     method = getIntMethod(executableElement, settingGetter);
                     break;
-                case VOID:
-                    method = getVoidMethod(executableElement);
-                    break;
                 case LONG:
                     method = getLongMethod(executableElement, settingGetter);
                     break;
                 case DOUBLE:
+                    method = getDoubleMethod(executableElement, settingGetter);
                     break;
                 case BOOLEAN:
+                    method = getBooleanMethod(executableElement, settingGetter);
                     break;
                 case DECLARED:
                     method = getDeclaredMethod(executableElement, settingGetter);
+                    break;
+                case VOID:
+                    method = getVoidMethod(executableElement);
                     break;
                 default:
             }
@@ -186,8 +188,11 @@ public class RemoteSettingImplGenerator {
         return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
+                .beginControlFlow("try")
                 .addStatement("String val = centreRepository.getOrDefault($S, $S)", key, defaultStr)
                 .addStatement("return $L.deserialization(val)", fieldName)
+                .endControlFlow("catch (Exception ignored) {}")
+                .addStatement("return $L.defaultObj()", fieldName)
                 .returns(TypeName.get(tm))
                 .build();
     }
@@ -215,12 +220,44 @@ public class RemoteSettingImplGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
                 .addStatement("String val = centreRepository.getOrDefault($S, $S)", key, defaultLongVal)
-                .addStatement("long longVal = 0")
+                .addStatement("long longVal = 0L")
                 .beginControlFlow("try")
                 .addStatement("longVal = $T.parseLong(val)", Long.class)
                 .endControlFlow("catch (Exception ignored) {}")
                 .addStatement("return longVal")
                 .returns(long.class)
+                .build();
+    }
+
+    private MethodSpec getDoubleMethod(ExecutableElement executableElement, SettingGetter settingGetter) {
+        String key = settingGetter.key();
+        String defaultDoubleVal = settingGetter.defaultValue();
+        return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .addStatement("String val = centreRepository.getOrDefault($S, $S)", key, defaultDoubleVal)
+                .addStatement("double doubleVal = 0.0")
+                .beginControlFlow("try")
+                .addStatement("doubleVal = $T.parseDouble(val)", Double.class)
+                .endControlFlow("catch (Exception ignored) {}")
+                .addStatement("return doubleVal")
+                .returns(double.class)
+                .build();
+    }
+
+    private MethodSpec getBooleanMethod(ExecutableElement executableElement, SettingGetter settingGetter) {
+        String key = settingGetter.key();
+        String defaultBooleanVal = settingGetter.defaultValue();
+        return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .addStatement("String val = centreRepository.getOrDefault($S, $S)", key, defaultBooleanVal)
+                .addStatement("boolean booleanVal = false")
+                .beginControlFlow("try")
+                .addStatement("booleanVal = $T.parseBoolean(val)", Boolean.class)
+                .endControlFlow("catch (Exception ignored) {}")
+                .addStatement("return booleanVal")
+                .returns(boolean.class)
                 .build();
     }
 }

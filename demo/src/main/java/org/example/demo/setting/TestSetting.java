@@ -19,4 +19,10 @@ public interface TestSetting {
 
     @SettingGetter(key="test_long", defaultValue = "500000000000000000")
     long testLong();
+
+    @SettingGetter(key = "test_double",  defaultValue = "0.878")
+    double testDouble();
+
+    @SettingGetter(key = "test_boolean",  defaultValue = "true")
+    boolean testBoolean();
 }
