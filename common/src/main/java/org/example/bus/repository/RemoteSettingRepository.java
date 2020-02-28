@@ -9,6 +9,8 @@ import org.example.bus.api.impl.DefaultUpdaterImpl;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.example.bus.common.Constants.MIN_UPDATE_INTERVAL;
+
 public class RemoteSettingRepository implements IRemoteSettingRepository {
 
     private static volatile RemoteSettingRepository remoteSettingRepository;
@@ -52,14 +54,17 @@ public class RemoteSettingRepository implements IRemoteSettingRepository {
         if (updateTimer != null) {
             updateTimer.cancel();
         }
-        updateTimer = new Timer();
-        TimerTask tTask = new TimerTask() {
-            @Override
-            public void run() {
-                updater.update(updateCallback);
-            }
-        }; //在里面实现你的操作
-        updateTimer.schedule(tTask, 0, Math.max(3000, updater.getUpdateInterval() * 1000));
+        if (updater.repeat()) {
+            updateTimer = new Timer();
+            TimerTask tTask = new TimerTask() {
+                @Override
+                public void run() {
+                    updater.update(updateCallback);
+                }
+            };
+            updateTimer.schedule(tTask, 0L,
+                    Math.max(1000 * MIN_UPDATE_INTERVAL, updater.getUpdateInterval() * 1000));
+        }
     }
 
     @Override

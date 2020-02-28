@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.example.bus.Constants.DEBUG;
-import static org.example.bus.Constants.IMPL_SUFFIX;
+import static org.example.bus.common.Constants.DEBUG;
+import static org.example.bus.common.Constants.IMPL_SUFFIX;
 
 public class RemoteSettingImplGenerator {
 
