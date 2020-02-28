@@ -64,6 +64,9 @@ public class LocalSettingImplGenerator {
             // 生成 getter 方法
             Iterable<MethodSpec> generatedGetterMethods = GetterMethodGenerator.generateGetterMethods(getterMethods);
 
+            // 生成 setter 方法
+            Iterable<MethodSpec> generatedSetterMethods = SetterMethodGenerator.generateSetterMethods(setterMethods);
+
             // 生成构造方法
             MethodSpec constructor = generateConstructor();
 
@@ -75,6 +78,7 @@ public class LocalSettingImplGenerator {
                     .addField(LocalSettingRepository.class, "centreRepository", Modifier.PRIVATE, Modifier.FINAL)
                     .addMethod(constructor)
                     .addMethods(generatedGetterMethods)
+                    .addMethods(generatedSetterMethods)
                     .build();
 
             // 写入文件

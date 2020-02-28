@@ -19,7 +19,4 @@ public @interface SettingSetter {
 
     // 关于这个设置的注释
     String explanation() default "";
-
-    // 如果不存在键为 key 的设置 返回的默认值
-    String defaultValue() default "";
 }

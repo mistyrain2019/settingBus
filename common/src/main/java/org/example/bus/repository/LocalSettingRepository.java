@@ -26,5 +26,9 @@ public class LocalSettingRepository {
         return settingKV.getOrDefault(key, defaultVal);
     }
 
+    public String set(String key, String val) {
+        return settingKV.put(key, val);
+    }
+
     private Map<String, String> settingKV = new ConcurrentHashMap<>();
 }
