@@ -44,4 +44,10 @@ public interface TestLocalSetting {
 
     @SettingGetter(key = "test_local_point", converterClazz = PointConverter.class)
     Point getPointLocal();
+
+    @SettingGetter(key = "test_local_int2", defaultValue = "22")
+    int getInt2Val();
+
+    @SettingGetter(key = "test_local_int3", defaultValue = "33")
+    int getInt3Val();
 }

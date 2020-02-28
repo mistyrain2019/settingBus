@@ -6,5 +6,5 @@ public interface LocalSettingStorage {
 
     void save(Map<String, String> kvs);
 
-    Map<String, String> read();
+    void read(ReadStorageCallback readStorageCallback);
 }
