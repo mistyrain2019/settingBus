@@ -1,6 +1,7 @@
 package org.example.demo.test;
 
 import org.example.bus.SettingBus;
+import org.example.bus.api.impl.SimpleNetworkUpdater;
 import org.example.bus.repository.RemoteSettingRepository;
 import org.example.demo.bean.Point;
 import org.example.demo.setting.TestLocalSetting;
@@ -8,11 +9,13 @@ import org.example.demo.setting.TestSetting;
 
 public class TestMain {
 
+    public static final String GET_URL = "http://localhost:2012/settings";
+
     private static void testRemote() {
 
         System.out.println("\nRemoteBefore: \n");
 
-        RemoteSettingRepository.getInstance().setUpdater(new TestUpdater());
+        RemoteSettingRepository.getInstance().setUpdater(new SimpleNetworkUpdater(GET_URL, 2, true));
 
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testInt());
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testOther());

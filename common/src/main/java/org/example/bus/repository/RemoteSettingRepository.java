@@ -64,6 +64,8 @@ public class RemoteSettingRepository implements IRemoteSettingRepository {
             };
             updateTimer.schedule(tTask, 0L,
                     Math.max(1000 * MIN_UPDATE_INTERVAL, updater.getUpdateInterval() * 1000));
+        } else {
+            updater.update(updateCallback);
         }
     }
 
