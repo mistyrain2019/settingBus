@@ -22,9 +22,7 @@ public class LocalSettingRepository implements ILocalSettingRepository {
     }
 
     private Map<String, String> settingKV = new ConcurrentHashMap<>();
-
     private LocalSettingReadCallbackImpl callback = new LocalSettingReadCallbackImpl();
-
     private LocalSettingStorage storage;
 
     @Override
@@ -48,7 +46,7 @@ public class LocalSettingRepository implements ILocalSettingRepository {
     }
 
     @Override
-    public void save() {
+    public void saveToStorage() {
         if (storage != null) {
             storage.save(settingKV);
         }

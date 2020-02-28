@@ -12,7 +12,7 @@ public interface ILocalSettingRepository {
 
     void setStorage(LocalSettingStorage storage);
 
-    void save();
+    void saveToStorage();
 
     void readFromStorage();
 }

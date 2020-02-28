@@ -27,15 +27,10 @@ public class RemoteSettingRepository implements IRemoteSettingRepository {
     }
 
     private Map<String, String> settingKV = new ConcurrentHashMap<>();
-
     private volatile List<OnUpdateObserver> onUpdateObservers = new ArrayList<>();
-
     private final Object OBSERVER_LOCK = new Object();
-
     private volatile RemoteSettingUpdater updater = new DefaultUpdaterImpl();
-
     private UpdateCallback updateCallback = new RemoteSettingUpdateCallBack();
-
     private Timer updateTimer = null;
 
     @Override
