@@ -9,6 +9,9 @@ import org.example.demo.setting.TestSetting;
 public class TestMain {
 
     private static void testRemote() {
+
+        System.out.println("\nRemoteBefore: \n");
+
         RemoteSettingRepository.getInstance().setUpdater(new TestUpdater());
 
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testInt());
@@ -22,6 +25,8 @@ public class TestMain {
             e.printStackTrace();
         }
 
+        System.out.println("\nRemoteAfter: \n");
+
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testInt());
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testOther());
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testLong());
@@ -31,6 +36,9 @@ public class TestMain {
     }
 
     private static void testLocal() {
+
+        System.out.println("\nLocalBefore:\n");
+
         System.out.println(SettingBus.obtainSetting(TestLocalSetting.class).getTestLocalInt());
         System.out.println(SettingBus.obtainSetting(TestLocalSetting.class).getLocalTestDouble());
         System.out.println(SettingBus.obtainSetting(TestLocalSetting.class).getLocalTestLong());
@@ -45,7 +53,7 @@ public class TestMain {
         SettingBus.obtainSetting(TestLocalSetting.class).setLocalTestBoolean(true);
         SettingBus.obtainSetting(TestLocalSetting.class).setPointLocal(new Point(9, 8));
 
-        System.out.println("\nafter:\n");
+        System.out.println("\nLocalAfter:\n");
 
         System.out.println(SettingBus.obtainSetting(TestLocalSetting.class).getTestLocalInt());
         System.out.println(SettingBus.obtainSetting(TestLocalSetting.class).getLocalTestDouble());
@@ -57,5 +65,7 @@ public class TestMain {
 
     public static void main(String[] args) {
         testLocal();
+
+        testRemote();
     }
 }
