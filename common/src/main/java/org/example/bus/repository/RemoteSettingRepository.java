@@ -6,9 +6,7 @@ import org.example.bus.api.RemoteSettingUpdater;
 import org.example.bus.api.UpdateCallback;
 import org.example.bus.api.impl.DefaultUpdaterImpl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RemoteSettingRepository implements IRemoteSettingRepository {
@@ -36,6 +34,8 @@ public class RemoteSettingRepository implements IRemoteSettingRepository {
 
     private UpdateCallback updateCallback = new RemoteSettingUpdateCallBack();
 
+    private Timer updateTimer = null;
+
     @Override
     public String getVal(String key) {
         return settingKV.get(key);
@@ -49,6 +49,17 @@ public class RemoteSettingRepository implements IRemoteSettingRepository {
     @Override
     public void setUpdater(RemoteSettingUpdater newUpdater) {
         this.updater = newUpdater;
+        if (updateTimer != null) {
+            updateTimer.cancel();
+        }
+        updateTimer = new Timer();
+        TimerTask tTask = new TimerTask() {
+            @Override
+            public void run() {
+                updater.update(updateCallback);
+            }
+        }; //在里面实现你的操作
+        updateTimer.schedule(tTask, 0, Math.max(3000, updater.getUpdateInterval() * 1000));
     }
 
     @Override

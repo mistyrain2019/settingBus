@@ -9,7 +9,7 @@ public class DefaultUpdaterImpl implements RemoteSettingUpdater {
     }
 
     @Override
-    public int getUpdateFrequency() {
+    public int getUpdateInterval() {
         return Integer.MAX_VALUE;
     }
 }
