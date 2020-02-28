@@ -15,10 +15,19 @@ public interface TestLocalSetting {
     @SettingSetter(key = "test_local_int")
     void setLocalTestInt(int tttt);
 
+    @SettingSetter(key = "test_local_double")
+    void setLocalTestDouble(double dddd);
+
+    @SettingSetter(key = "test_local_long")
+    void setLocalTestLong(long longVal);
+
+    @SettingSetter(key = "test_local_boolean")
+    void setLocalTestBoolean(boolean bbbb);
+
 //    @SettingSetter(key = "test_local_int")
 //    void setTestLocalInt();
 
-//    @SettingSetter(key = "test_local_point", converterClazz = PointConverter.class)
-//    void setPointLocal(Point point);
+    @SettingSetter(key = "test_local_point", converterClazz = PointConverter.class)
+    void setPointLocal(Point point);
 
 }

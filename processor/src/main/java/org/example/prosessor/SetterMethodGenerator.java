@@ -1,14 +1,19 @@
 package org.example.prosessor;
 
 import com.squareup.javapoet.MethodSpec;
-import org.example.bus.annotation.SettingGetter;
+import com.squareup.javapoet.TypeName;
 import org.example.bus.annotation.SettingSetter;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.example.bus.common.Constants.STRING_QUALIFIED_NAME;
 
 public class SetterMethodGenerator {
 
@@ -17,31 +22,22 @@ public class SetterMethodGenerator {
 
         for (ExecutableElement executableElement : ees) {
 
-            SettingSetter settingGetter = executableElement.getAnnotation(SettingSetter.class);
+            SettingSetter settingSetter = executableElement.getAnnotation(SettingSetter.class);
 
             TypeKind setTypeKind = executableElement.getParameters().get(0).asType().getKind();
             MethodSpec method = null;
 
             switch (setTypeKind) {
                 case INT:
-                    method = getIntMethod(executableElement, settingGetter);
+                case LONG:
+                case DOUBLE:
+                case BOOLEAN:
+                    method = getBasicMethod(executableElement, settingSetter);
                     break;
-//                case LONG:
-//                    method = getLongMethod(executableElement, settingGetter);
-//                    break;
-//                case DOUBLE:
-//                    method = getDoubleMethod(executableElement, settingGetter);
-//                    break;
-//                case BOOLEAN:
-//                    method = getBooleanMethod(executableElement, settingGetter);
-//                    break;
-//                case DECLARED:
-//                    method = getDeclaredMethod(executableElement, settingGetter);
-//                    break;
-//                case VOID:
-//                    method = getVoidMethod(executableElement);
-//                    break;
-//                default:
+                case DECLARED:
+                    method = getDeclaredMethod(executableElement, settingSetter);
+                    break;
+                default:
             }
 
             generatedSetterMethods.add(method);
@@ -49,16 +45,43 @@ public class SetterMethodGenerator {
         return generatedSetterMethods;
     }
 
-    private static MethodSpec getIntMethod(ExecutableElement executableElement, SettingSetter settingSetter) {
+    private static MethodSpec getBasicMethod(ExecutableElement executableElement, SettingSetter settingSetter) {
         String key = settingSetter.key();
-        String toSetVal = executableElement.getParameters().get(0).toString();
-//        executableElement.getParameters();
-        System.out.println(executableElement.getParameters().get(0));
+        VariableElement variable = executableElement.getParameters().get(0);
+        String toSetValueName = variable.toString();
         return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
-                .addParameter(int.class, toSetVal)
+                .addParameter(TypeName.get(variable.asType()), toSetValueName)
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
-                .addStatement("centreRepository.set($S, $T.valueOf($L))", key, String.class, toSetVal)
+                .addStatement("centreRepository.set($S, $T.valueOf($L))", key, String.class, toSetValueName)
+                .returns(void.class)
+                .build();
+    }
+
+    private static MethodSpec getDeclaredMethod(ExecutableElement executableElement, SettingSetter settingSetter) {
+        VariableElement variable = executableElement.getParameters().get(0);
+        TypeMirror typeMirror = variable.asType();
+        if (STRING_QUALIFIED_NAME.equals(typeMirror.toString())) {
+            return getBasicMethod(executableElement, settingSetter);
+        }
+        List<? extends TypeMirror> tp = null;
+        try {
+            settingSetter.converterClazz();
+        } catch (MirroredTypesException mte) {
+            tp = mte.getTypeMirrors();
+        }
+        String key = settingSetter.key();
+        if (tp == null || tp.size() < 1) {
+            throw new RuntimeException("不提供转换器 无法转换");
+        }
+        String toSetValueName = variable.toString();
+        String fieldName = ConverterFieldsGenerator.getGeneratedFieldName(tp.get(0));
+        return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+                .addParameter(TypeName.get(typeMirror), toSetValueName)
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .addStatement("String convertedStr = $L.serialization($L)", fieldName, toSetValueName)
+                .addStatement("centreRepository.set($S, convertedStr)", key)
                 .returns(void.class)
                 .build();
     }
