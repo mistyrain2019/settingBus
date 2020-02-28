@@ -34,7 +34,7 @@ public class FileStorage implements LocalSettingStorage {
         fileIO.execute(() -> {
             FileUtil.ensureFileExists(filePath);
             Map<String, String> mp = FileUtil.readFromFile(filePath);
-            readStorageCallback.onRead(readStorageCallback);
+            readStorageCallback.onRead(mp);
         });
     }
 }
