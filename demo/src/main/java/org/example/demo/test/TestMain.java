@@ -8,5 +8,6 @@ public class TestMain {
     public static void main(String[] args) {
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testInt());
         System.out.println(SettingBus.obtainSetting(TestSetting.class).testOther());
+        System.out.println(SettingBus.obtainSetting(TestSetting.class).testLong());
     }
 }

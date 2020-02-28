@@ -1,12 +1,12 @@
 package org.example.bus;
 
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RemoteSettingRepository {
 
-    private Map<String, String> settingKV = new HashMap<>();
+    private Map<String, String> settingKV = new ConcurrentHashMap<>();
 
     private static volatile RemoteSettingRepository remoteSettingRepository;
 

@@ -139,6 +139,7 @@ public class RemoteSettingImplGenerator {
                     method = getVoidMethod(executableElement);
                     break;
                 case LONG:
+                    method = getLongMethod(executableElement, settingGetter);
                     break;
                 case DOUBLE:
                     break;
@@ -156,12 +157,11 @@ public class RemoteSettingImplGenerator {
     }
 
     private MethodSpec getVoidMethod(ExecutableElement executableElement) {
-        MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+        return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
                 .returns(void.class)
                 .build();
-        return methodSpec;
     }
 
     private MethodSpec getDeclaredMethod(ExecutableElement executableElement, SettingGetter settingGetter) {
@@ -183,20 +183,19 @@ public class RemoteSettingImplGenerator {
                     .build();
         }
         String fieldName = tp.get(0).toString().toLowerCase().replaceAll("\\.", "_");
-        MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+        return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
                 .addStatement("String val = centreRepository.getOrDefault($S, $S)", key, defaultStr)
                 .addStatement("return $L.deserialization(val)", fieldName)
                 .returns(TypeName.get(tm))
                 .build();
-        return methodSpec;
     }
 
     private MethodSpec getIntMethod(ExecutableElement executableElement, SettingGetter settingGetter) {
         String key = settingGetter.key();
         String defaultIntVal = settingGetter.defaultValue();
-        MethodSpec methodSpec = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+        return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
                 .addStatement("String val = centreRepository.getOrDefault($S, $S)", key, defaultIntVal)
@@ -207,8 +206,21 @@ public class RemoteSettingImplGenerator {
                 .addStatement("return intVal")
                 .returns(int.class)
                 .build();
-        return methodSpec;
     }
 
-
+    private MethodSpec getLongMethod(ExecutableElement executableElement, SettingGetter settingGetter) {
+        String key = settingGetter.key();
+        String defaultLongVal = settingGetter.defaultValue();
+        return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .addStatement("String val = centreRepository.getOrDefault($S, $S)", key, defaultLongVal)
+                .addStatement("long longVal = 0")
+                .beginControlFlow("try")
+                .addStatement("longVal = $T.parseLong(val)", Long.class)
+                .endControlFlow("catch (Exception ignored) {}")
+                .addStatement("return longVal")
+                .returns(long.class)
+                .build();
+    }
 }
