@@ -168,6 +168,10 @@ public class RemoteSettingImplGenerator {
 
     private MethodSpec getDeclaredMethod(ExecutableElement executableElement, SettingGetter settingGetter) {
         TypeMirror tm = executableElement.getReturnType();
+        if (tm.toString().endsWith("String")) {
+            System.out.println(tm.toString());
+            return getStringMethod(executableElement, settingGetter);
+        }
         List<? extends TypeMirror> tp = null;
         try {
             settingGetter.converterClazz();
@@ -194,6 +198,17 @@ public class RemoteSettingImplGenerator {
                 .endControlFlow("catch (Exception ignored) {}")
                 .addStatement("return $L.defaultObj()", fieldName)
                 .returns(TypeName.get(tm))
+                .build();
+    }
+
+    private MethodSpec getStringMethod(ExecutableElement executableElement, SettingGetter settingGetter) {
+        String key = settingGetter.key();
+        String defaultStr = settingGetter.defaultValue();
+        return MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .addStatement("return centreRepository.getOrDefault($S, $S)", key, defaultStr)
+                .returns(String.class)
                 .build();
     }
 

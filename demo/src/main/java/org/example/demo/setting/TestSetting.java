@@ -25,4 +25,7 @@ public interface TestSetting {
 
     @SettingGetter(key = "test_boolean",  defaultValue = "true")
     boolean testBoolean();
+
+    @SettingGetter(key = "test_str",  defaultValue = "ttttstr")
+    String testString();
 }

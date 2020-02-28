@@ -8,9 +8,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 仅支持 int long boolean double
+ * 仅支持 int long boolean double String
  * 和 自定义类 如果是自定义类 需要 实现一个
- * @see Converter 接口 并把其类对象 传给 converterClazz
+ * @see Converter 接口 并把实现的Converter类的class 传给 converterClazz
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.SOURCE)
