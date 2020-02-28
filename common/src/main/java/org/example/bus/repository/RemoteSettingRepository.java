@@ -98,6 +98,7 @@ public class RemoteSettingRepository implements IRemoteSettingRepository {
 
         @Override
         public void onFailure() {
+            System.out.println("更新失败 请检查 update 配置");
         }
     }
 }

@@ -22,7 +22,7 @@ public class SettingBus {
         try {
             String interfaceName = clazz.getCanonicalName();
             if (DEBUG) {
-                System.out.println(interfaceName);
+                System.out.println("find settings impl by reflect: " + interfaceName);
             }
             Class<?> impl = Class.forName(interfaceName + IMPL_SUFFIX);
             return (T) impl.newInstance();
