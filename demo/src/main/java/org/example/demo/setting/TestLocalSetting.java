@@ -9,9 +9,6 @@ import org.example.demo.converter.PointConverter;
 @LocalSetting
 public interface TestLocalSetting {
 
-    @SettingGetter(key = "test_local_int", defaultValue = "9", explanation = "测试int类型")
-    int testLocalInt();
-
     @SettingSetter(key = "test_local_int")
     void setLocalTestInt(int tttt);
 
@@ -24,10 +21,27 @@ public interface TestLocalSetting {
     @SettingSetter(key = "test_local_boolean")
     void setLocalTestBoolean(boolean bbbb);
 
-//    @SettingSetter(key = "test_local_int")
-//    void setTestLocalInt();
+    @SettingSetter(key = "test_local_str")
+    void setTestLocalStr(String s);
 
     @SettingSetter(key = "test_local_point", converterClazz = PointConverter.class)
     void setPointLocal(Point point);
 
+    @SettingGetter(key = "test_local_int", defaultValue = "9", explanation = "测试int类型")
+    int getTestLocalInt();
+
+    @SettingGetter(key = "test_local_double", defaultValue = "0.01010101")
+    double getLocalTestDouble();
+
+    @SettingGetter(key = "test_local_long", defaultValue = "-14")
+    long getLocalTestLong();
+
+    @SettingGetter(key = "test_local_boolean", defaultValue = "false")
+    boolean getLocalTestBoolean();
+
+    @SettingGetter(key = "test_local_str", defaultValue = "defaultStr")
+    String getTestLocalStr();
+
+    @SettingGetter(key = "test_local_point", converterClazz = PointConverter.class)
+    Point getPointLocal();
 }
