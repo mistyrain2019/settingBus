@@ -1,7 +1,7 @@
 package org.example.prosessor;
 
 import com.squareup.javapoet.*;
-import org.example.bus.RemoteSettingRepository;
+import org.example.bus.repository.RemoteSettingRepository;
 import org.example.bus.annotation.SettingGetter;
 
 import javax.annotation.processing.Filer;
