@@ -7,6 +7,7 @@ import org.example.bus.annotation.SettingSetter;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -24,6 +25,12 @@ public class ConverterFieldsGenerator {
             SettingSetter settingSetter = executableElement.getAnnotation(SettingSetter.class);
             if (settingGetter == null && settingSetter == null) {
                 continue;
+            }
+            if (settingSetter != null) {
+                List<? extends VariableElement> parameters = executableElement.getParameters();
+                if (parameters == null || parameters.isEmpty()) {
+                    throw new RuntimeException("无参方法不应被注解为setter!");
+                }
             }
 
             TypeKind typeKindToConvert = settingGetter != null ? executableElement.getReturnType().getKind()

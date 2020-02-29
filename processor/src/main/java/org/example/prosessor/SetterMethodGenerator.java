@@ -23,8 +23,12 @@ public class SetterMethodGenerator {
         for (ExecutableElement executableElement : ees) {
 
             SettingSetter settingSetter = executableElement.getAnnotation(SettingSetter.class);
+            List<? extends VariableElement> parameters = executableElement.getParameters();
+            if (parameters == null || parameters.isEmpty()) {
+                throw new RuntimeException("无参方法无法生成setter");
+            }
 
-            TypeKind setTypeKind = executableElement.getParameters().get(0).asType().getKind();
+            TypeKind setTypeKind = parameters.get(0).asType().getKind();
             MethodSpec method = null;
 
             switch (setTypeKind) {

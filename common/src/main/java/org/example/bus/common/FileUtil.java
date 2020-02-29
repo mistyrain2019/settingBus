@@ -1,12 +1,10 @@
 package org.example.bus.common;
 
-import com.sun.istack.internal.Nullable;
 
 import java.io.*;
 
 public class FileUtil {
 
-    @Nullable
     public static <T> T readFromFile(String path) {
         FileInputStream fis = null;
         try {
