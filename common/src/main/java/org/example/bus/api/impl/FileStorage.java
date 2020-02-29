@@ -11,7 +11,7 @@ public class FileStorage implements LocalSettingStorage {
 
     private String filePath;
     private ExecutorService fileIO = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
-            2L, TimeUnit.SECONDS,
+            60L, TimeUnit.SECONDS,
             new SynchronousQueue<Runnable>());
 
     public FileStorage() {

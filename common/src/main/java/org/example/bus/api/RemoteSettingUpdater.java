@@ -1,5 +1,9 @@
 package org.example.bus.api;
 
+
+/**
+ * 用户可自行实现 RemoteSetting 的更新方式
+ */
 public interface RemoteSettingUpdater {
 
     void update(UpdateCallback updateCallback);

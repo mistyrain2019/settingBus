@@ -11,6 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.example.bus.common.Constants.MIN_UPDATE_INTERVAL;
 
+
+/**
+ * RemoteSetting 即
+ * 远端设置的中央仓库
+ */
 public class RemoteSettingRepository implements IRemoteSettingRepository {
 
     private static volatile RemoteSettingRepository remoteSettingRepository;

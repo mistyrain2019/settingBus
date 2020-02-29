@@ -6,6 +6,11 @@ import org.example.bus.api.ReadStorageCallback;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+/**
+ * LocalSetting 即
+ * 本地设置的中央仓库
+ */
 public class LocalSettingRepository implements ILocalSettingRepository {
 
     private static volatile LocalSettingRepository remoteSettingRepository;
