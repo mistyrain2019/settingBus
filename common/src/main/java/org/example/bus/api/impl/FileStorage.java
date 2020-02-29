@@ -5,13 +5,14 @@ import org.example.bus.api.ReadStorageCallback;
 import org.example.bus.common.FileUtil;
 
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class FileStorage implements LocalSettingStorage {
 
     private String filePath;
-    private Executor fileIO = Executors.newSingleThreadExecutor();
+    private ExecutorService fileIO = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+            2L, TimeUnit.SECONDS,
+            new SynchronousQueue<Runnable>());
 
     public FileStorage() {
         filePath = "./local_setting_storage.txt";
@@ -27,6 +28,7 @@ public class FileStorage implements LocalSettingStorage {
             FileUtil.ensureFileExists(filePath);
             FileUtil.writeToFile(kvs, filePath);
         });
+//        fileIO.shutdownNow();
     }
 
     @Override

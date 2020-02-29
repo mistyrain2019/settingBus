@@ -13,16 +13,16 @@ public class SettingBus {
     public static <T> T obtainSetting(Class<T> clazz) {
         String clazzName = clazz.toString();
         if (!SETTING_IMPL_CLASS_CACHE.containsKey(clazzName)) {
-            SETTING_IMPL_CLASS_CACHE.put(clazzName, findSettingsImpl(clazz));
+            SETTING_IMPL_CLASS_CACHE.put(clazzName, lookForSettingsImpl(clazz));
         }
         return (T) SETTING_IMPL_CLASS_CACHE.get(clazz.toString());
     }
 
-    private static <T> T findSettingsImpl(Class<T> clazz) {
+    private static <T> T lookForSettingsImpl(Class<T> clazz) {
         try {
             String interfaceName = clazz.getCanonicalName();
             if (DEBUG) {
-                System.out.println("find settings impl by reflect: " + interfaceName);
+                System.out.println("looking for settings impl by reflect: " + interfaceName);
             }
             Class<?> impl = Class.forName(interfaceName + IMPL_SUFFIX);
             return (T) impl.newInstance();
