@@ -13,6 +13,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+/**
+ * 注解处理器
+ * 是整个注解处理的入口
+ */
 public class SettingProsessor extends AbstractProcessor {
 
     private Types typeUtils;

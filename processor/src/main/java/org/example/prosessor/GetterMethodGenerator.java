@@ -14,6 +14,9 @@ import java.util.List;
 
 import static org.example.bus.common.Constants.STRING_QUALIFIED_NAME;
 
+/**
+ * 用于生成 setting 的 getter 方法
+ */
 public class GetterMethodGenerator {
 
     public static Iterable<MethodSpec> generateGetterMethods(List<? extends ExecutableElement> ees) {

@@ -7,6 +7,9 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import java.util.List;
 
+/**
+ * 接口信息
+ */
 public class InterfaceInfo {
 
     public String interfaceName;

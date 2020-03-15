@@ -15,6 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 自定义类型的 setting 需要 converter
+ * 来进行序列化和反序列化
+ * 需要在 setting 实现类中加入需要的 converter 成员变量
+ */
 public class ConverterFieldsGenerator {
 
     public static Iterable<FieldSpec> generateConverterFields(List<? extends ExecutableElement> methods) {

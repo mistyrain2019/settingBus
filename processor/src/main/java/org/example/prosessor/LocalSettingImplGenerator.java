@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
 
 import static org.example.bus.common.Constants.IMPL_SUFFIX;
 
+/**
+ * 用于生成本地设置接口的实现类
+ */
 public class LocalSettingImplGenerator {
 
     private Filer filer;

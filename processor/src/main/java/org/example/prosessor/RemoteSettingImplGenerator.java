@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
 
 import static org.example.bus.common.Constants.IMPL_SUFFIX;
 
+/**
+ * 用于生成远端设置接口的实现类
+ */
 public class RemoteSettingImplGenerator {
 
     private Filer filer;
