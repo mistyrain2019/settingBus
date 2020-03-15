@@ -6,6 +6,11 @@ import org.example.bus.annotation.SettingSetter;
 import org.example.demo.bean.Point;
 import org.example.demo.converter.PointConverter;
 
+
+/**
+ * 本地设置 demo
+ * processor 会根据注解创建实现
+ */
 @LocalSetting
 public interface TestLocalSetting {
 
