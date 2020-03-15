@@ -1,5 +1,6 @@
 package org.example.bus.common;
 
+
 public class Constants {
 
     public static boolean DEBUG = true;

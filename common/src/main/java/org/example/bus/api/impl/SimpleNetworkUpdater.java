@@ -69,7 +69,7 @@ public class SimpleNetworkUpdater implements RemoteSettingUpdater {
             URL getUrl = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) getUrl.openConnection();
             connection.connect();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));// 设置编码,否则中文乱码
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
             String lines;
             String res = "";
             while ((lines = reader.readLine()) != null) {
